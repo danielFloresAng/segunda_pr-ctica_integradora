@@ -1,7 +1,10 @@
 import { Router } from "express";
 import config from "../config.js";
+import { isValidPass } from "../utils.js";
+import userManager from "../dao/usersManagaerMdb.js";
 
 const router = Router();
+const manager = new userManager();
 
 const admindAuth = (req, res, next) => {
   if (req.session.user?.role !== "admin")
@@ -35,20 +38,9 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const savedUser = {
-      email: "jezz@gmail.com",
-      password: "jezz123",
-      firstName: "Jezz",
-      lastName: "Diaz",
-      role: "admin",
-    };
+    const findUser = await manager.getUser({ email: email });
 
-    req.session.user = {
-      firstName: savedUser.firstName,
-      lastName: savedUser.lastName,
-      role: savedUser.role,
-    };
-    savedUser.email === email && savedUser.password === password
+    findUser && isValidPass(password, findUser.password)
       ? res.redirect("/profile")
       : res.status(401).send({
           status: "Datos no válidos",
@@ -72,5 +64,13 @@ router.delete("/", async (req, res) => {
     res.status(500).send({ status: "Error", playload: error.message });
   }
 });
+router.get("/current", async (req, res) => {
+  try {
+    res.status(200).send({ origin: config.SERVER, playload: "DELETE" });
+  } catch (error) {
+    res.status(500).send({ status: "Error", playload: error.message });
+  }
+});
+
 
 export default router;

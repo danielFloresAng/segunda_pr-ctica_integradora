@@ -13,6 +13,7 @@ import viewsRouter from "./routes/views.routes.js";
 import userIndexRouter from "./routes/user.routes.js";
 import cookiesRouter from "./routes/cookies.routes.js";
 import sessionsRouter from './routes/session.routes.js'
+import authsRouter from './routes/auth.routes.js'
 
 const app = express();
 
@@ -52,4 +53,5 @@ app.use("/api/carts", cartRouter);
 app.use("/api/users", userIndexRouter);
 app.use("/api/cookies", cookiesRouter);
 app.use('/api/sessions', sessionsRouter)
+app.use('/api/auth', authsRouter)
 app.use("/static", express.static(`${config.DIRNAME}/public`));
