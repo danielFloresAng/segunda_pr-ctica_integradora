@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
 
 import config from "./config.js";
 import socketInit from "./sockets.js";
@@ -14,6 +15,7 @@ import userIndexRouter from "./routes/user.routes.js";
 import cookiesRouter from "./routes/cookies.routes.js";
 import sessionsRouter from './routes/session.routes.js'
 import authsRouter from './routes/auth.routes.js'
+import initializePassport from "./config/passport.config.js";
 
 const app = express();
 
@@ -42,6 +44,9 @@ app.use(
     saveUninitialized: false,
   })
 );
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.engine("handlebars", handelbars.engine());
 app.set("views", `${config.DIRNAME}/views`);
