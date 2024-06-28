@@ -40,4 +40,33 @@ const initializePassport = () => {
   );
 };
 
+passport.use(
+  "login",
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (username, password, done) => {
+      try {
+        const user = await userModel.findOne({ email: username });
+        if (!user) {
+          console.log(`El usuario ${username} no existe`);
+          return done(null, false);
+        }
+        if (!isValidPass(user, password)) return done(null, false);
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+passport.serializeUser((user, done) => {
+  {
+    done(null, user._id);
+  }
+});
+passport.deserializeUser(async (id, done) => {
+  let user = await userModel.findById(id);
+  done(null, user);
+});
+
 export default initializePassport;

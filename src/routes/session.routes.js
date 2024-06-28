@@ -2,6 +2,7 @@ import { Router } from "express";
 import config from "../config.js";
 import { isValidPass } from "../utils.js";
 import userManager from "../dao/usersManagaerMdb.js";
+import passport from "passport";
 
 const router = Router();
 const manager = new userManager();
@@ -71,6 +72,26 @@ router.get("/current", async (req, res) => {
     res.status(500).send({ status: "Error", playload: error.message });
   }
 });
-
+router.post(
+  "/register",
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
+  async (req, res) => {
+    try {
+      res
+        .status(200)
+        .send({ origin: config.SERVER, message: "user registered" });
+    } catch (error) {
+      res.status(500).send({ status: "Error", playload: error.message });
+    }
+  }
+);
+router.get("/failregister", async (req, res) => {
+  try {
+    res.send({ origin: config.SERVER, message: "Failed Strategy" });
+    console.log("Failed Strategy");
+  } catch (error) {
+    res.status(500).send({ status: "Error", playload: error.message });
+  }
+});
 
 export default router;
