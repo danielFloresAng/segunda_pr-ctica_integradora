@@ -1,10 +1,15 @@
 import bcrypt from "bcrypt";
 
+
+import config from "./config.js";
+
 export const createHash = (password) =>
   bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
 export const isValidPass = (enteredPassword, savedPassword) =>
   bcrypt.compareSync(enteredPassword, savedPassword);
+
+
 
 export const verifyRequired = (required) => {
   return (req, res, next) => {

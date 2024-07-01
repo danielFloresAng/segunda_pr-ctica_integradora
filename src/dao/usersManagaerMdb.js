@@ -7,12 +7,25 @@ class userManager {
 
   getUser = async (filter) => {
     try {
-      return this.users.find(filter).lean()
+      return this.users.find(filter).lean();
     } catch (error) {
-      return error.message
+      return error.message;
+    }
+  };
+
+  addUser = async (firstName, lastName, email, password) => {
+    try {
+      return await this.users.create({
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+      
+    } catch (error) {
+      return error.message;
     }
   };
 }
 
-
-export default userManager
+export default userManager;

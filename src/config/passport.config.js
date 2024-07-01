@@ -1,43 +1,45 @@
 import passport from "passport";
 import local from "passport-local";
-import { createHash, isValidPass } from "../utils.js";
-import userModel from "../dao/models/users.models.js";
+import { isValidPass } from "../utils.js";
+
+import config from "../config.js";
+import userManager from "../dao/usersManagaerMdb.js";
 
 const LocalStrategy = local.Strategy;
+const manager = new userManager();
 
 const initializePassport = () => {
   passport.use(
-    "register",
+    "login",
     new LocalStrategy(
       {
         passReqToCallback: true,
         usernameField: "email",
       },
       async (req, username, password, done) => {
-        const { firstName, lastName, email, role } = req.body;
-
         try {
-          let user = await userModel.findOne({ email: username });
-          if (user) {
-            res.send({ message: "El usuario ya existe" });
+          const user = await manager.getUser({ email: username });
+
+          if (user && isValidPass(password, user.password)) {
+            const { password, ...filteredUser } = user;
+            return done(null, filteredUser);
+          } else {
             return done(null, false);
           }
-          const newUser = {
-            firstName,
-            lastName,
-            email,
-            role,
-            password: createHash(password),
-          };
-
-          let result = await userModel.create(newUser);
-          return done(null, result);
         } catch (error) {
-          return done(`Error al obtener el usuario "${+error}"`);
+          return done(`Error al obtener el usuario "${+error}"`, false);
         }
       }
     )
   );
+
+  passport.serializeUser((user, done) => {
+    done(null, user);
+  });
+
+  passport.deserializeUser((user, done) => {
+    done(null, user);
+  });
 };
 
 export default initializePassport;
