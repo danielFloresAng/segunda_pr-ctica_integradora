@@ -7,6 +7,7 @@ import userManager from "../dao/usersManagaerMdb.js";
 import initializePassport from "../config/passport.config.js";
 
 
+
 const router = Router();
 const manager = new userManager();
 initializePassport()
@@ -143,6 +144,15 @@ router.delete("/", async (req, res) => {
 router.get("/current", async (req, res) => {
   try {
     res.status(200).send({ origin: config.SERVER, playload: "DELETE" });
+  } catch (error) {
+    res.status(500).send({ status: "Error", playload: error.message });
+  }
+});
+
+router.get("/failregister", async (req, res) => {
+  try {
+    res.send({ origin: config.SERVER, message: "Failed Strategy" });
+    console.log("Failed Strategy");
   } catch (error) {
     res.status(500).send({ status: "Error", playload: error.message });
   }
