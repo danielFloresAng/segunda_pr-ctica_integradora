@@ -6,11 +6,9 @@ import { isValidPass, createHash, verifyRequired } from "../utils.js";
 import userManager from "../dao/usersManagaerMdb.js";
 import initializePassport from "../config/passport.config.js";
 
-
-
 const router = Router();
 const manager = new userManager();
-initializePassport()
+initializePassport();
 
 const admindAuth = (req, res, next) => {
   if (req.session.user?.role !== "admin")
@@ -126,14 +124,39 @@ router.post(
     }
   }
 );
-
-router.put("/", async (req, res) => {
-  try {
-    res.status(200).send({ origin: config.SERVER, playload: "PUT" });
-  } catch (error) {
-    res.status(500).send({ status: "Error", playload: error.message });
+// Ruta de autenticación con git hub
+router.get(
+  "/ghlogin",
+  passport.authenticate("ghlogin", { scope: ["user"] }),
+  async (req, res) => {
+    // try {
+    //   res.status(200).send({ origin: config.SERVER, playload: "PUT" });
+    // } catch (error) {
+    //   res.status(500).send({ status: "Error", playload: error.message });
+    // }
   }
-});
+);
+router.get(
+  "/ghlogincallback",
+  passport.authenticate("ghlogin", {
+    failureRedirect: `/login?error=${encodeURI(
+      "Error al identificar con Github"
+    )}`,
+  }),
+  async (req, res) => {
+    try {
+      req.session.user = req.user;
+      req.session.save((error) => {
+        if (error)
+          returnres.status(500).send({ status: "Error", error: error.message });
+        res.redirect("/profile");
+      });
+      res.status(200).send({ origin: config.SERVER, playload: "DELETE" });
+    } catch (error) {
+      res.status(500).send({ status: "Error", playload: error.message });
+    }
+  }
+);
 router.delete("/", async (req, res) => {
   try {
     res.status(200).send({ origin: config.SERVER, playload: "DELETE" });
@@ -141,6 +164,7 @@ router.delete("/", async (req, res) => {
     res.status(500).send({ status: "Error", playload: error.message });
   }
 });
+
 router.get("/current", async (req, res) => {
   try {
     res.status(200).send({ origin: config.SERVER, playload: "DELETE" });

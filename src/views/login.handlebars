@@ -54,8 +54,15 @@
         required="required"
       />
 
-      <button class="btn">Ingresar</button>
+      <div style="margin-top: 24px;">
 
+        <button class="btn">Ingresar</button>
+        <br /><br />
+        <button
+          class="btn btn-info submit_btn"
+          onclick="window.location.replace('/api/auth/ghlogin')"
+        >Github</button>
+      </div>
       <div>
         ¿Aún no tienes cuenta? regístrate
         <a href="/register">aquí.</a>
