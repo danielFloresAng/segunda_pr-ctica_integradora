@@ -53,14 +53,18 @@
         class="form-control"
         required="required"
       />
-
+      {{#if showError}}
+        <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
+          {{errorMessage}}
+        </div>
+      {{/if}}
       <div style="margin-top: 24px;">
 
         <button class="btn">Ingresar</button>
         <br /><br />
         <button
           class="btn btn-info submit_btn"
-          onclick="window.location.replace('/api/auth/ghlogin')"
+          onclick="window.location.replace('/api/sessions/ghlogin')"
         >Github</button>
       </div>
       <div>

@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import GitHubStrategy from 'passport-github2'
+import GitHubStrategy from 'passport-github2';
 
 import { isValidPass } from "../utils.js";
 import config from "../config.js";
@@ -50,7 +50,7 @@ const initializePassport = () => {
                 // Tratamos de ubicar en NUESTRA base de datos un usuario
                 // con ese email, si no está lo creamos y lo devolvemos,
                 // si ya existe retornamos directamente esos datos
-                const foundUser = await manager.getOne({ email: email });
+                const foundUser = await manager.getUser({ email: email });
 
                 if (!foundUser) {
                     const user = {
@@ -60,7 +60,7 @@ const initializePassport = () => {
                         password: 'none'
                     }
 
-                    const process = await manager.add(user);
+                    const process = await manager.addUser(user);
 
                     return done(null, process);
                 } else {

@@ -127,14 +127,8 @@ router.post(
 // Ruta de autenticación con git hub
 router.get(
   "/ghlogin",
-  passport.authenticate("ghlogin", { scope: ["user"] }),
-  async (req, res) => {
-    // try {
-    //   res.status(200).send({ origin: config.SERVER, playload: "PUT" });
-    // } catch (error) {
-    //   res.status(500).send({ status: "Error", playload: error.message });
-    // }
-  }
+  passport.authenticate("ghlogin", { scope: ["user: email"] }),
+  async (req, res) => {}
 );
 router.get(
   "/ghlogincallback",
@@ -148,10 +142,11 @@ router.get(
       req.session.user = req.user;
       req.session.save((error) => {
         if (error)
-          returnres.status(500).send({ status: "Error", error: error.message });
+          return res
+            .status(500)
+            .send({ status: "Error", error: error.message });
         res.redirect("/profile");
       });
-      res.status(200).send({ origin: config.SERVER, playload: "DELETE" });
     } catch (error) {
       res.status(500).send({ status: "Error", playload: error.message });
     }
